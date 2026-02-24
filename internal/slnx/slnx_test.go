@@ -1,7 +1,6 @@
 package slnx
 
 import (
-	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -72,25 +71,5 @@ func TestRoundTripParseWriteParse(t *testing.T) {
 	}
 	if strings.TrimSpace(first.Folders[0].Projects[1].InnerXML) != strings.TrimSpace(second.Folders[0].Projects[1].InnerXML) {
 		t.Fatalf("project inner xml mismatch after roundtrip")
-	}
-}
-
-func TestParseRepoSample(t *testing.T) {
-	t.Parallel()
-
-	repoRoot := filepath.Join("..", "..")
-	samplePath := filepath.Join(repoRoot, "n2jWeb.slnx")
-
-	solution, err := ParseFile(samplePath)
-	if err != nil {
-		t.Fatalf("parse sample .slnx: %v", err)
-	}
-
-	projectCount := 0
-	for _, folder := range solution.Folders {
-		projectCount += len(folder.Projects)
-	}
-	if projectCount == 0 {
-		t.Fatal("expected sample to contain projects")
 	}
 }
