@@ -1,0 +1,40 @@
+# Binaries
+wyrd
+wyrd-server
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Build output
+/bin/
+/dist/
+
+# Test cache & coverage
+*.test
+*.out
+coverage.html
+
+# Go workspace
+go.work
+go.work.sum
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Custom
+*.slnx
+*.slnx.sync
