@@ -70,7 +70,7 @@ jobs:
         go-version-file: 'go.mod'
 
     - name: Build
-      run: go build -v main.go -o slnxsync
+      run: go build -v -o slnxsync main.go
 
     - name: Verify binary
       run: ./slnxsync version
