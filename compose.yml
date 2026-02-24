@@ -1,0 +1,14 @@
+services:
+  slnxsync:
+    build:
+      context: .
+      dockerfile: cmd/slnxsync/Dockerfile
+      args:
+        VERSION: ${VERSION:-dev}
+        COMMIT: ${COMMIT:-unknown}
+        BUILD_DATE: ${BUILD_DATE:-unknown}
+    image: slnxsync:local
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace:ro
+    command: ["version"]
