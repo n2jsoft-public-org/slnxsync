@@ -1,15 +1,18 @@
 package logging
 
-import "fmt"
+import (
+	"fmt"
+	"sync/atomic"
+)
 
-var verbose bool
+var verbose atomic.Bool
 
 func SetVerbose(enabled bool) {
-	verbose = enabled
+	verbose.Store(enabled)
 }
 
 func Verbosef(format string, args ...any) {
-	if !verbose {
+	if !verbose.Load() {
 		return
 	}
 	fmt.Printf(format+"\n", args...)
