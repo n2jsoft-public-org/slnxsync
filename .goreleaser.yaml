@@ -1,0 +1,77 @@
+# Builds slnxsync for every supported platform into dist/: run `goreleaser build --snapshot --clean`.
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+version: 2
+
+project_name: slnxsync
+
+builds:
+  - id: slnxsync
+    main: .
+    binary: slnxsync
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X main.Version={{ .Version }} -X main.Commit={{ .ShortCommit }} -X main.BuildDate={{ .CommitDate }}
+    # Same commit, same binary.
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+archives:
+  # Raw binaries, not archives: users' CI downloads
+  # releases/latest/download/slnxsync-<os>-<arch>[.exe].
+  - name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
+    formats:
+      - binary
+
+checksum:
+  name_template: checksums.txt
+
+# Keyless: GitHub's OIDC token identifies the release workflow (id-token: write).
+signs:
+  - cmd: cosign
+    signature: "${artifact}.sigstore.json"
+    args:
+      - sign-blob
+      - "--bundle=${signature}"
+      - "${artifact}"
+      - "--yes"
+    artifacts: checksum
+
+changelog:
+  disable: true
+
+# brew install --cask n2jsoft-public-org/tap/slnxsync
+homebrew_casks:
+  - binaries:
+      - slnxsync
+    homepage: https://github.com/n2jsoft-public-org/slnxsync
+    description: Generate filtered .slnx solution files for CI from include/exclude profiles
+    license: MIT
+    repository:
+      owner: n2jsoft-public-org
+      name: homebrew-tap
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+    commit_msg_template: "slnxsync {{ .Tag }}"
+    # The binaries are not notarized: without this, macOS refuses to run them.
+    hooks:
+      post:
+        install_steps: |
+          on_macos do
+            run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{ .StagedPath }}"]
+          end
+
+# semantic-release creates the release as a draft, named after its tag, with the notes
+# (.releaserc.yaml). GoReleaser attaches the files to that draft, then publishes it.
+release:
+  use_existing_draft: true
+  mode: keep-existing
+  # A re-run of a failed release replaces what the first run uploaded.
+  replace_existing_artifacts: true

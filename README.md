@@ -17,7 +17,13 @@ A Go CLI tool that reads a source `.slnx` solution file and a filter configurati
 ## Installation
 
 ```bash
-go install github.com/n2jsoft-public-org/slnxsync/cmd/slnxsync@latest
+brew install --cask n2jsoft-public-org/tap/slnxsync
+```
+
+Or with Go:
+
+```bash
+go install github.com/n2jsoft-public-org/slnxsync@latest
 ```
 
 Or build from source:
@@ -214,10 +220,10 @@ Examples:
 ```yaml
 - task: GoTool@0
   inputs:
-    version: '1.23'
+    version: '1.27'
 
 - script: |
-    go install github.com/n2jsoft-public-org/slnxsync/cmd/slnxsync@latest
+    go install github.com/n2jsoft-public-org/slnxsync@latest
     slnxsync generate -c filters.yml --profile api-ci
   displayName: 'Generate API solution'
 
@@ -232,11 +238,11 @@ Examples:
 - name: Setup Go
   uses: actions/setup-go@v5
   with:
-    go-version: '1.23'
+    go-version: '1.27'
 
 - name: Generate filtered solution
   run: |
-    go install github.com/n2jsoft-public-org/slnxsync/cmd/slnxsync@latest
+    go install github.com/n2jsoft-public-org/slnxsync@latest
     slnxsync generate -c filters.yml --profile api-ci
 
 - name: Build solution
